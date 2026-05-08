@@ -1,0 +1,67 @@
+{#
+  SQLi Widget — Interactive search component
+
+  This template is included inside BOTH the Vulnerable and Secure tab panels.
+  The JS in main.js detects which panel it belongs to and routes the AJAX
+  request to the correct endpoint (vulnerable vs secure).
+#}
+
+<div class="widget sqli-widget">
+    <p class="widget-hint">
+        Search for users in the database. Try names like
+        <code>alice</code>, <code>bob</code>, or <code>admin</code>.
+    </p>
+
+    <form class="widget-form" data-vuln-id="sqli" autocomplete="off">
+        <div class="input-group">
+            <input
+                type="text"
+                name="q"
+                class="widget-input"
+                placeholder="Search users…"
+                aria-label="Search query"
+                id="{{ 'vuln' if caller is not defined else '' }}-sqli-input"
+            />
+            <button type="submit" class="widget-submit">
+                Search
+            </button>
+        </div>
+    </form>
+
+    <!-- Example payloads hint (only shown in vulnerable tab via CSS/JS) -->
+    <details class="payload-hints">
+        <summary>💡 Example payloads to try</summary>
+        <ul>
+            <li><code>' OR '1'='1</code> — always-true condition, dumps all rows</li>
+            <li><code>' UNION SELECT username, password, role FROM users --</code> — extract credentials</li>
+            <li><code>' UNION SELECT sql, NULL, NULL FROM sqlite_master --</code> — extract table schema</li>
+        </ul>
+    </details>
+
+    <!-- Results area -->
+    <div class="widget-results" style="display: none;">
+        <div class="results-header">
+            <span class="results-title">Results</span>
+            <span class="results-count"></span>
+        </div>
+        <div class="results-table-wrap">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Bio</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="query-used">
+            <span class="query-label">SQL query executed:</span>
+            <code class="query-value"></code>
+        </div>
+    </div>
+
+    <!-- Error area -->
+    <div class="widget-error" style="display: none;"></div>
+</div>

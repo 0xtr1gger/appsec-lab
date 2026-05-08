@@ -1,0 +1,16 @@
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+a {
+    text-decoration: none;
+}
+
+pre code {
+    background-color: #1a1a1a;
+    padding: 1rem;
+    display: block;
+    border-radius: 6px;
+    color: #e8e8e8;
+}

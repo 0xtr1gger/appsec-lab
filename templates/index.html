@@ -1,0 +1,79 @@
+{% extends "layout_sidebar.html" %}
+
+{% block title %}AppSec Lab — Interactive Web Security Training{% endblock %}
+
+{% block page_content %}
+<div class="home">
+    <!-- ── Hero ───────────────────────────────────────────── -->
+    <section class="hero">
+        <div class="hero-badge">Open Source · Educational · Hands-On</div>
+        <h1 class="hero-title">
+            <span class="hero-icon">🛡️</span>
+            AppSec Lab
+        </h1>
+        <p class="hero-subtitle">
+            An interactive, intentionally vulnerable web application for learning
+            server-side security vulnerabilities. Exploit real bugs, then learn
+            how to fix them.
+        </p>
+        <div class="hero-actions">
+            {% if vulnerabilities %}
+            <a href="/{{ vulnerabilities[0].id }}/" class="btn btn-primary" id="start-learning-btn">
+                Start Learning →
+            </a>
+            {% endif %}
+            <a href="https://github.com/0xtr1gger/appsec-lab" target="_blank" rel="noopener" class="btn btn-outline" id="github-btn">
+                ⭐ Star on GitHub
+            </a>
+        </div>
+    </section>
+
+    <!-- ── How it works ──────────────────────────────────── -->
+    <section class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps-grid">
+            <div class="step-card">
+                <span class="step-number">1</span>
+                <h3>Learn</h3>
+                <p>Read the explanation of each vulnerability, including real-world impact and CWE references.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-number">2</span>
+                <h3>Exploit</h3>
+                <p>Switch to the <strong>Vulnerable</strong> tab and try actual exploitation payloads against live, intentionally insecure code.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-number">3</span>
+                <h3>Fix</h3>
+                <p>Switch to the <strong>Secure</strong> tab to see the mitigated version and understand exactly what changed.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Vulnerability cards ───────────────────────────── -->
+    <section class="lab-grid-section">
+        <h2>Available Labs</h2>
+        <div class="lab-grid">
+            {% for v in vulnerabilities %}
+            <a href="/{{ v.id }}/" class="lab-card" id="card-{{ v.id }}">
+                <span class="lab-card-icon">{{ v.icon }}</span>
+                <h3 class="lab-card-title">{{ v.short_title }}</h3>
+                <span class="lab-card-cwe">{{ v.cwe }}</span>
+                <p class="lab-card-desc">{{ v.description|striptags|truncate(100) }}</p>
+            </a>
+            {% else %}
+            <p class="empty-state">No vulnerability labs registered yet. Check the README for setup instructions.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- ── Disclaimer ────────────────────────────────────── -->
+    <section class="disclaimer">
+        <p>
+            ⚠️ <strong>Disclaimer:</strong> This application contains intentional
+            security vulnerabilities for educational purposes. <strong>Do not
+            deploy to a public server.</strong> Run locally only.
+        </p>
+    </section>
+</div>
+{% endblock %}
