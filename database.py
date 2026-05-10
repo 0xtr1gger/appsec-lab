@@ -55,25 +55,35 @@ CREATE TABLE IF NOT EXISTS products (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     name        TEXT NOT NULL,
     description TEXT,
-    price       REAL,
-    category    TEXT
+    price       REAL NOT NULL,
+    category    TEXT NOT NULL,
+    image_emoji TEXT DEFAULT '☕'
 );
 """
 
 SEED_SQL = """
 INSERT OR IGNORE INTO users (username, email, password, role, bio) VALUES
-    ('admin',   'admin@appsec-lab.local',  'admin123',       'admin', 'System administrator'),
-    ('alice',   'alice@example.com',       'password123',    'user',  'Security researcher'),
-    ('bob',     'bob@example.com',         'bob2024',        'user',  'Bug bounty hunter'),
-    ('charlie', 'charlie@example.com',     'charlie!',       'user',  'Pentester'),
-    ('eve',     'eve@example.com',         'evil_password',  'user',  'Definitely not malicious');
+    ('admin',   'admin@brewhaus.local',    'S3cur3!Admin#2024', 'admin', 'System administrator'),
+    ('alice',   'alice@example.com',       'alice_Pass!99',     'user',  'Security researcher'),
+    ('bob',     'bob@example.com',         'b0bbyTables#1',     'user',  'Bug bounty hunter'),
+    ('charlie', 'charlie@example.com',     'Ch4rl!3_2024',      'user',  'Pentester'),
+    ('eve',     'eve@example.com',         'ev1l_Passw0rd!',    'user',  'Definitely not malicious');
 
-INSERT OR IGNORE INTO products (name, description, price, category) VALUES
-    ('Web Security Handbook',   'Complete guide to web application security',       49.99,  'Books'),
-    ('Burp Suite Pro License',  'Annual license for Burp Suite Professional',       449.00, 'Tools'),
-    ('OWASP Testing Guide',     'Official OWASP testing methodology',              0.00,   'Books'),
-    ('Pentest Lab Access',      '30-day access to online penetration testing labs', 29.99,  'Training'),
-    ('Security+ Study Guide',   'CompTIA Security+ certification prep',            39.99,  'Books');
+INSERT OR IGNORE INTO products (name, description, price, category, image_emoji) VALUES
+    ('Espresso',       'Rich and bold single shot',              3.50,  'Coffee',      '☕'),
+    ('Cappuccino',     'Espresso with steamed milk foam',        4.50,  'Coffee',      '☕'),
+    ('Latte',          'Smooth espresso with lots of milk',      4.75,  'Coffee',      '☕'),
+    ('Mocha',          'Chocolate meets espresso',               5.25,  'Coffee',      '🍫'),
+    ('Americano',      'Espresso diluted with hot water',        3.75,  'Coffee',      '☕'),
+    ('Matcha Latte',   'Japanese green tea with steamed milk',   5.50,  'Tea',         '🍵'),
+    ('Chai Latte',     'Spiced tea with frothy milk',            4.75,  'Tea',         '🍵'),
+    ('Earl Grey',      'Classic bergamot black tea',             3.25,  'Tea',         '🍵'),
+    ('Iced Tea',       'Refreshing cold-brewed tea',             3.75,  'Cold Drinks', '🧊'),
+    ('Lemonade',       'Freshly squeezed with a hint of mint',   4.00,  'Cold Drinks', '🍋'),
+    ('Iced Coffee',    'Cold brew served over ice',              4.50,  'Cold Drinks', '🧊'),
+    ('Hot Chocolate',  'Rich cocoa with whipped cream',          4.50,  'Specialty',   '🍫'),
+    ('Affogato',       'Vanilla gelato drowned in espresso',     5.75,  'Specialty',   '🍨'),
+    ('Turmeric Latte', 'Golden milk with warming spices',        5.25,  'Specialty',   '✨');
 """
 
 

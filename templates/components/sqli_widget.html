@@ -1,65 +1,62 @@
 {#
-  SQLi Widget — Interactive search component
+  SQLi Widget — Café Product Catalog
 
   This template is included inside BOTH the Vulnerable and Secure tab panels.
-  The JS in main.js detects which panel it belongs to and routes the AJAX
-  request to the correct endpoint (vulnerable vs secure).
+  The JS in the vulnerability page detects which panel it belongs to (via
+  the parent's data-mode attribute) and routes the request to the correct
+  endpoint (vulnerable vs secure).
 #}
 
 <div class="widget sqli-widget">
-    <p class="widget-hint">
-        Search for users in the database. Try names like
-        <code>alice</code>, <code>bob</code>, or <code>admin</code>.
-    </p>
+    <div class="cafe-header">
+        <span class="cafe-logo">☕</span>
+        <div>
+            <h3 class="cafe-name">BrewHaus Café</h3>
+            <p class="cafe-tagline">Handcrafted drinks, made with love</p>
+        </div>
+    </div>
 
-    <form class="widget-form" data-vuln-id="sqli" autocomplete="off">
-        <div class="input-group">
-            <input
-                type="text"
-                name="q"
-                class="widget-input"
-                placeholder="Search users…"
-                aria-label="Search query"
-                id="{{ 'vuln' if caller is not defined else '' }}-sqli-input"
-            />
-            <button type="submit" class="widget-submit">
-                Search
+    <div class="filter-bar">
+        <label for="" class="filter-label">Filter by Category</label>
+        <div class="filter-controls">
+            <select class="category-select" aria-label="Product category">
+                <option value="">All Categories</option>
+            </select>
+            <button type="button" class="filter-btn">
+                Show Products
             </button>
         </div>
-    </form>
+    </div>
 
-    <!-- Example payloads hint (only shown in vulnerable tab via CSS/JS) -->
+    <!-- Payload hints (contextually relevant in vulnerable tab) -->
     <details class="payload-hints">
         <summary>💡 Example payloads to try</summary>
+        <p class="hint-instruction">Select "All Categories", then replace the category value in the dropdown with one of these payloads using your browser's DevTools, or simply type it in the input field below:</p>
+        <div class="manual-input-group">
+            <input
+                type="text"
+                class="manual-category-input"
+                placeholder="Type a category or injection payload…"
+                aria-label="Manual category input"
+            />
+            <button type="button" class="filter-btn manual-filter-btn">
+                Filter
+            </button>
+        </div>
         <ul>
-            <li><code>' OR '1'='1</code> — always-true condition, dumps all rows</li>
-            <li><code>' UNION SELECT username, password, role FROM users --</code> — extract credentials</li>
-            <li><code>' UNION SELECT sql, NULL, NULL FROM sqlite_master --</code> — extract table schema</li>
+            <li><code>' UNION SELECT username, password, email, role FROM users --</code> — extract credentials</li>
+            <li><code>' UNION SELECT sql, NULL, NULL, NULL FROM sqlite_master --</code> — extract table schemas</li>
+            <li><code>' OR '1'='1</code> — always-true condition, dumps all products</li>
         </ul>
     </details>
 
-    <!-- Results area -->
-    <div class="widget-results" style="display: none;">
-        <div class="results-header">
-            <span class="results-title">Results</span>
-            <span class="results-count"></span>
-        </div>
-        <div class="results-table-wrap">
-            <table class="results-table">
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Bio</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-        <div class="query-used">
-            <span class="query-label">SQL query executed:</span>
-            <code class="query-value"></code>
-        </div>
+    <!-- Product grid (populated via JS) -->
+    <div class="product-grid" style="display: none;"></div>
+
+    <!-- Query display -->
+    <div class="query-used" style="display: none;">
+        <span class="query-label">SQL query executed:</span>
+        <code class="query-value"></code>
     </div>
 
     <!-- Error area -->

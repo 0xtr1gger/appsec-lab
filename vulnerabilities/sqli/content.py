@@ -24,20 +24,21 @@ VULN_META = {
         "allowing the attacker to read, modify, or delete data they "
         "should never have access to."
     ),
-    "blog_url": "http//localhost:5000/sqli",
+    "blog_url": "http://localhost:5000/sqli",
 
     # ── widget ────────────────────────────────────────────────
     "widget_template": "components/sqli_widget.html",
 
     # ── vulnerable tab ────────────────────────────────────────
-    "vuln_code": '''\
-@sqli_bp.route("/sqli/search/vulnerable", methods=["POST"])
-def search_vulnerable():
-    query = request.form.get("q", "")
+    "vuln_code": """\
+@sqli_bp.route("/sqli/filter/vulnerable")
+def filter_vulnerable():
+    category = request.args.get("category", "")
     db = get_db()
 
     # ⚠️  VULNERABLE: f-string interpolation in SQL
-    sql = f"SELECT username, email, bio FROM users WHERE username LIKE '%{query}%'"
+    sql = f"SELECT name, description, price, category "\\
+          f"FROM products WHERE category = '{category}'"
 
     try:
         results = db.execute(sql).fetchall()
@@ -45,39 +46,48 @@ def search_vulnerable():
     except Exception as exc:
         return jsonify(error=str(exc), query_used=sql), 400
 
-    return jsonify(results=rows, query_used=sql)''',
+    return jsonify(results=rows, query_used=sql)\
+""",
 
     "vuln_explanation": (
-        "The query is built by concatenating user input directly into the "
-        "SQL string with an f-string. An attacker can close the quote and "
-        "inject arbitrary SQL — for example: <br>"
-        "<code>' UNION SELECT username, password, role FROM users --</code>"
-        "<br>This breaks out of the <code>LIKE</code> clause and appends "
+        "The <code>category</code> query parameter is interpolated directly "
+        "into the SQL string using an f-string. An attacker can close the "
+        "surrounding quotes and inject arbitrary SQL — for example:<br><br>"
+        "<code>' UNION SELECT username, password, email, role FROM users --</code>"
+        "<br><br>"
+        "This breaks out of the <code>WHERE</code> clause and appends "
         "a <code>UNION SELECT</code> that dumps every username &amp; "
-        "password from the <code>users</code> table."
+        "password from the <code>users</code> table. The results are "
+        "rendered right alongside regular product data since they share the "
+        "same number of columns."
     ),
 
     # ── secure tab ────────────────────────────────────────────
-    "secure_code": '''\
-@sqli_bp.route("/sqli/search/secure", methods=["POST"])
-def search_secure():
-    query = request.form.get("q", "")
+    "secure_code": """\
+@sqli_bp.route("/sqli/filter/secure")
+def filter_secure():
+    category = request.args.get("category", "")
     db = get_db()
 
-    # ✅ SECURE: Parameterized query — user input is never part of the SQL syntax
-    sql = "SELECT username, email, bio FROM users WHERE username LIKE ?"
-    param = f"%{query}%"
+    # ✅ SECURE: Parameterized query
+    sql = "SELECT name, description, price, category "\\
+          "FROM products WHERE category = ?"
 
-    results = db.execute(sql, (param,)).fetchall()
-    rows = [dict(r) for r in results]
+    try:
+        results = db.execute(sql, (category,)).fetchall()
+        rows = [dict(r) for r in results]
+    except Exception as exc:
+        return jsonify(error=str(exc), query_used=sql), 400
 
-    return jsonify(results=rows, query_used=sql)''',
+    return jsonify(results=rows, query_used=sql)\
+""",
 
     "secure_explanation": (
         "The parameterized query uses a <code>?</code> placeholder. "
         "The database driver sends the SQL structure and the user value "
         "<em>separately</em>, so the database always treats the input as "
         "a literal string — never as SQL syntax. The <code>UNION</code> "
-        "payload is simply searched for as text and returns no results."
+        "payload is simply searched for as a category name and returns "
+        "no results."
     ),
 }
