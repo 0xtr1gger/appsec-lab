@@ -43,16 +43,21 @@ def categories():
 
 @sqli_bp.route("/sqli/filter/vulnerable")
 def filter_vulnerable():
-    """Filter products by category — **intentionally vulnerable** to SQL injection.
+    """Filter products by category — INTENTIONALLY VULNERABLE to SQL injection.
 
     The category value is interpolated directly into the SQL string via an
-    f-string, enabling UNION-based SQL injection.
+    f-string, which creates an SQL injection vulnerability.
     """
     category = request.args.get("category", "")
     db = get_db()
 
-    # ⚠️  VULNERABLE: f-string interpolation in SQL
-    sql = f"SELECT name, description, price, category FROM products WHERE category = '{category}'"
+    # base query — show all products by default (if no category specified)
+    sql = "SELECT name, description, price, category FROM products"
+
+    # only apply filter if category is specified and not "all"
+    if category != "" and category.lower() != "all":
+        # VULNERABLE: f-string interpolation in SQL — user input is directly part of the query syntax
+        sql = f"SELECT name, description, price, category FROM products WHERE category = '{category}'"
 
     try:
         results = db.execute(sql).fetchall()
@@ -62,22 +67,28 @@ def filter_vulnerable():
 
     return jsonify(results=rows, query_used=sql)
 
-
 # ---------------------------------------------------------------------------
 # SECURE endpoint
 # ---------------------------------------------------------------------------
 
 @sqli_bp.route("/sqli/filter/secure")
 def filter_secure():
-    """Filter products by category — **secure** parameterized query."""
+    """Filter products by category — secure parameterized query."""
     category = request.args.get("category", "")
     db = get_db()
 
-    # ✅ SECURE: parameterized query — user input is never part of the SQL syntax
-    sql = "SELECT name, description, price, category FROM products WHERE category = ?"
+    # base query — show all products by default (if no category specified)
+    sql = "SELECT name, description, price, category FROM products"
+    params = ()
+
+    # only apply filter if category is specified and not "all"
+    if category != "" and category.lower() != "all":
+        # SECURE: parameterized query — user input is never part of the SQL syntax
+        sql = "SELECT name, description, price, category FROM products WHERE category = ?"
+        params = (category,)
 
     try:
-        results = db.execute(sql, (category,)).fetchall()
+        results = db.execute(sql, params).fetchall()
         rows = [dict(r) for r in results]
     except Exception as exc:
         return jsonify(error=str(exc), query_used=sql), 400

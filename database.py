@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS products (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    name        TEXT NOT NULL,
+    name        TEXT NOT NULL UNIQUE,
     description TEXT,
     price       REAL NOT NULL,
     category    TEXT NOT NULL,
