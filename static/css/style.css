@@ -336,7 +336,7 @@ a {
     gap: .5rem;
 }
 
-.category-select {
+.category-input {
     flex: 1;
     background: var(--bg-input);
     border: 1px solid var(--border-color);
@@ -349,7 +349,7 @@ a {
     cursor: pointer;
 }
 
-.category-select:focus {
+.category-input:focus {
     outline: none;
     border-color: var(--accent-blue);
     box-shadow: 0 0 0 3px rgba(96, 165, 250, .15);
@@ -542,6 +542,7 @@ a {
     padding: .75rem 1rem;
     font-size: .8rem;
     overflow-x: auto;
+    margin-bottom: 1rem;
 }
 
 .query-label {
@@ -569,7 +570,7 @@ a {
     padding: .75rem 1rem;
     font-size: .85rem;
     font-family: 'JetBrains Mono', monospace;
-    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 /* Code Section */
