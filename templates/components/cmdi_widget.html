@@ -1,0 +1,74 @@
+{#
+CMDi Widget — Network Diagnostics Ping Tool
+
+This template is included inside BOTH the Vulnerable and Secure tab panels.
+The JS in the CMDi vulnerability page detects which panel it belongs to
+(via the parent's data-mode attribute) and routes the request to the
+correct endpoint (vulnerable vs secure).
+#}
+
+<div class="widget cmdi-widget">
+    <div class="terminal-header">
+        <span class="terminal-dots">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+        </span>
+        <div>
+            <h3 class="terminal-title">Network Diagnostics</h3>
+            <p class="terminal-tagline">Ping a host to check connectivity</p>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <label class="filter-label">Target Host</label>
+        <div class="filter-controls">
+            <input type="text" class="category-input host-input" placeholder="e.g. 127.0.0.1 or google.com"
+                autocomplete="off" spellcheck="false" aria-label="Hostname or IP address" />
+            <button type="button" class="filter-btn ping-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    style="vertical-align: middle; margin-right: 4px;">
+                    <path d="M22 2 11 13" />
+                    <path d="m22 2-7 20-4-9-9-4z" />
+                </svg>
+                Run Ping
+            </button>
+        </div>
+    </div>
+
+    <!-- Payload hints (contextually relevant in vulnerable tab) -->
+    <details class="payload-hints">
+        <summary>Example payloads to try</summary>
+        <p class="hint-instruction">Enter a legitimate host first, then try appending shell operators:</p>
+        <ul>
+            <li><code>127.0.0.1</code> — legitimate ping request; establishes a baseline response.</li>
+            <li><code>127.0.0.1; whoami</code> — semicolon <code>;</code> is a command separator; runs
+                <code>whoami</code> after <code>ping</code>.</li>
+            <li><code>127.0.0.1 && cat /etc/passwd</code> — <code>&&</code> (AND) runs the next command only if
+                <code>ping</code> succeeds.</li>
+            <li><code>127.0.0.1 | id</code> — pipe <code>|</code> sends <code>ping</code> output to <code>id</code> as
+                input; both commands execute.</li>
+            <li><code>127.0.0.1 || ls -la /</code> — <code>||</code> (OR) runs the next command only if
+                <code>ping</code> fails.</li>
+            <li><code>`whoami`</code> — backtick substitution; the shell executes <code>whoami</code> and substitutes
+                its output into the command string.</li>
+            <li><code>$(cat /etc/hostname)</code> — inline command substitution (<code>$()</code> syntax); equivalent to
+                backticks.</li>
+        </ul>
+    </details>
+
+    <!-- Error area -->
+    <div class="widget-error" style="display: none;"></div>
+
+    <!-- Command display -->
+    <div class="query-used command-used" style="display: none;">
+        <span class="query-label">Command executed:</span>
+        <code class="query-value command-value"></code>
+    </div>
+
+    <!-- Terminal output -->
+    <div class="terminal-output-wrapper" style="display: none;">
+        <pre class="terminal-output"></pre>
+    </div>
+</div>
