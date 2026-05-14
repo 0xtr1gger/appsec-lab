@@ -26,7 +26,6 @@ VULN_META = {
         "additional commands onto the intended one."
     ),
     "blog_url": "https://0xtr1gger.github.io/trigger_book/Hack-the-Web/Injection/OS-command-injection",
-    "blog_link_text": "0xtr1gger book/OS command injection",
 
     # ── widget ────────────────────────────────────────────────
     "widget_template": "components/cmdi_widget.html",

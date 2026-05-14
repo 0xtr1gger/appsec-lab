@@ -12,9 +12,9 @@
             AppSec Lab
         </h1>
         <p class="hero-subtitle">
-            An interactive, intentionally vulnerable web application for learning
-            server-side security vulnerabilities. Exploit real bugs, then learn
-            how to fix them.
+            Interactive, hands-on OWASP Top 10 AppSec lab. 
+            <br>Intentionally vulnerable functionality with source code and practical mitigation examples.
+            Exploit real bugs, then learn how to fix them.
         </p>
         <div class="hero-actions">
             {% if vulnerabilities %}
@@ -28,27 +28,14 @@
         </div>
     </section>
 
-    <!-- ── How it works ──────────────────────────────────── -->
-    <section class="how-it-works">
-        <h2>How It Works</h2>
-        <div class="steps-grid">
-            <div class="step-card">
-                <span class="step-number">1</span>
-                <h3>Learn</h3>
-                <p>Read the explanation of each vulnerability, including real-world impact and CWE references.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-number">2</span>
-                <h3>Exploit</h3>
-                <p>Switch to the <strong>Vulnerable</strong> tab and try actual exploitation payloads against live, intentionally insecure code.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-number">3</span>
-                <h3>Fix</h3>
-                <p>Switch to the <strong>Secure</strong> tab to see the mitigated version and understand exactly what changed.</p>
-            </div>
-        </div>
+    <!-- ── Disclaimer ────────────────────────────────────── -->
+    <section class="disclaimer">
+        <p>
+            <strong>Disclaimer:</strong> This application contains intentional security vulnerabilities for educational purposes. Run locally and <strong>do not
+            deploy to a public server</strong>! <strike>(or you're risking to experience the impact in real life)</strike>
+        </p>
     </section>
+
 
     <!-- ── Vulnerability cards ───────────────────────────── -->
     <section class="lab-grid-section">
@@ -66,14 +53,35 @@
             {% endfor %}
         </div>
     </section>
-
-    <!-- ── Disclaimer ────────────────────────────────────── -->
-    <section class="disclaimer">
+    <section class="note">
         <p>
-            ⚠️ <strong>Disclaimer:</strong> This application contains intentional
-            security vulnerabilities for educational purposes. <strong>Do not
-            deploy to a public server.</strong> Run locally only.
+            <strong>Note:</strong> Code demonstrated in each lab is taken directly from the source of the corresponding page. You can check this in the <a href="https://github.com/0xtr1gger/appsec-lab/tree/main">GitHub repository</a>.
         </p>
     </section>
+
+    <!-- ── How it works ──────────────────────────────────── -->
+    <section class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps-grid">
+            <div class="step-card">
+                <span class="step-number">1</span>
+                <h3>Learn</h3>
+                <p>Learn how each vulnerability works and what impact it can have. Read in-depth articles in my <a href="https://0xtr1gger.github.io/trigger_book/">0xtr1gger book</a>.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-number">2</span>
+                <h3>Exploit</h3>
+                <p>Switch to the <strong>Vulnerable</strong> tab and exaperiment with actual exploitation payloads against live, intentionally insecure functionality. Inspect the source code and read explanations to understand the root cause of the vulnerability.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-number">3</span>
+                <h3>Fix</h3>
+                <p>Switch to the <strong>Secure</strong> tab to see secure version of the code and understand exactly what changed. Interact with live functionality to see the difference.</p>
+            </div>
+        </div>
+    </section>
+
+
+
 </div>
 {% endblock %}
