@@ -6,6 +6,8 @@ Intentionally vulnerable functionality with source code and practical mitigation
 
 Built with Python & Flask and Bootstrap ❤︎⁠
 
+<img width="913" height="1004" alt="appsec-lab-sqli" src="https://github.com/user-attachments/assets/a688806a-3b48-425a-b110-82cb12c53aa7" />
+
 
 ## Quick Start
 
