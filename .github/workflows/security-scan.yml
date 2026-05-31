@@ -1,0 +1,17 @@
+---
+name: Security Scan
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # Gitleaks secrets scannign
+  gitleaks:
+    uses: ./.github/workflows/gitleaks.yml
+    with:
+      fail_on_findings: false
+      enable_pr_comments: true
+      # config_path: '.github/security/gitleaks.yml' # optional, can be omitted if using default config
+    secrets: inherit

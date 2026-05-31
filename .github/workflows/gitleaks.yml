@@ -1,0 +1,42 @@
+name: Reusable Gitleaks Scan
+
+# This workflow runs Gitleaks to detect hard‑coded secrets in the repository.
+# Uses the official gitleaks action (free, open‑source) and runs on every push
+# and pull request to any branch.
+
+on:
+  workflow_call: # makes this workflow reusable by other workflows
+    inputs:
+      config_path:
+        description: 'Path to Gitleaks config file inside the respotiory (e.g., config/gitleaks.yml)'
+        required: false
+        type: string
+      fail_on_findings:
+        description: 'Whether to fail the workflow if any secrets are found (default: false)'
+        required: false
+        type: boolean
+        default: false
+      enable_pr_comments:
+        description: 'Whether to enable PR comments for findings (default: false)'
+        required: false
+        type: boolean
+        default: false
+  
+jobs:
+  gitleaks:
+    name: Gitleaks Secrets Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # fetch full history for accurate scanning
+
+      - name: Run Gitleaks scan
+        uses: gitleaks/gitleaks-action@v3
+        continue-on-error: ${{ !inputs.fail_on_findings }}
+        env:
+          GITLEAKS_CONFIG: ${{ inputs.config_path || '' }} # pass config path if provided
+          GITLEAKS_ENABLE_COMMENTS: ${{ inputs.enable_pr_comments }} # enable PR comments if specified
+          GITHUB_TOKEN: ${{ inputs.enable_pr_comments && secrets.GITHUB_TOKEN || '' }} # only set token if PR comments are enabled
