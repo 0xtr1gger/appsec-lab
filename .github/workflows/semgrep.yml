@@ -1,0 +1,119 @@
+---
+name: Reusable Semgrep Security Scan
+
+on:
+  workflow_call:
+    inputs:
+      
+      semgrep_rules:
+        description: 'Semgrep rulesets or custom rule paths'
+        required: false
+        type: string
+        default: 'p/ci p/security-audit p/secrets'
+
+      scan_level:
+        description: 'INFO | WARNING | ERROR'
+        required: false
+        type: string
+        default: 'WARNING'
+
+      fail_on_findings:
+        description: 'Whether to fail the workflow if any issues are found (default: false)'
+        required: false
+        type: boolean
+        default: false
+      
+      semgrep_timeout_seconds:
+        description: 'Semgrep timeout (in seconds)'
+        required: false
+        type: number
+        default: 300
+      
+      github_report:
+        description: 'Upload SARIF to GitHub Code Scanning'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  semgrep:
+    name: Semgrep Security Scan
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 30
+
+    env:
+      SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN || '' }}
+    
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # fetch full history for accurate scanning
+        
+      - name: Install Semgrep
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install --upgrade semgrep
+        
+      - name: Build Semgrep arguments
+        id: config
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Semgrep rules
+          read -ra rules <<< "${{ inputs.semgrep_rules }}"
+          CONFIG_ARGS=""
+          for rule in "${rules[@]}"; do
+            CONFIG_ARGS+=" --config=${rule}"
+          done
+
+          # Error flag
+          ERROR_FLAG=""
+          if [ "${{ inputs.fail_on_findings }}" == "true" ]; then
+            ERROR_FLAG="--error"
+          fi
+
+          echo "config_args=${CONFIG_ARGS# }" >> $GITHUB_OUTPUT
+          echo "error_flag=${ERROR_FLAG}" >> $GITHUB_OUTPUT
+
+      - name: Run Semgrep scan
+        if: ${{ !inputs.github_report}}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          semgrep scan \
+            ${{ steps.config.outputs.config_args }} \
+            --severity="${{ inputs.scan_level }}" \
+            --metrics=off \
+            --timeout "${{ inputs.semgrep_timeout_seconds }}" \
+            --json \
+            --output semgrep-report.json \
+            ${{ steps.config.outputs.error_flag }}
+
+      - name: Generate SARIF
+        if: ${{ inputs.github_report }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          semgrep scan \
+            ${{ steps.config.outputs.config_args }} \
+            --severity="${{ inputs.scan_level }}" \
+            --metrics=off \
+            --timeout "${{ inputs.semgrep_timeout_seconds }}" \
+            --sarif \
+            --output semgrep-report.sarif \
+            ${{ steps.config.outputs.error_flag }}
+        
+      - name: Upload SARIF to GitHub Code Scanning
+        if: ${{ inputs.github_report }}
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep-report.sarif
