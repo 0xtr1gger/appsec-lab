@@ -48,7 +48,8 @@ CREATE TABLE IF NOT EXISTS users (
     email    TEXT    NOT NULL,
     password TEXT    NOT NULL,
     role     TEXT    DEFAULT 'user',
-    bio      TEXT
+    bio      TEXT,
+    api_key  TEXT
 );
 
 CREATE TABLE IF NOT EXISTS products (
@@ -62,12 +63,12 @@ CREATE TABLE IF NOT EXISTS products (
 """
 
 SEED_SQL = """
-INSERT OR IGNORE INTO users (username, email, password, role, bio) VALUES
-    ('admin',   'admin@brewhaus.local',    'S3cur3!Admin#2024', 'admin', 'System administrator'),
-    ('alice',   'alice@example.com',       'alice_Pass!99',     'user',  'Security researcher'),
-    ('bob',     'bob@example.com',         'b0bbyTables#1',     'user',  'Bug bounty hunter'),
-    ('charlie', 'charlie@example.com',     'Ch4rl!3_2024',      'user',  'Pentester'),
-    ('eve',     'eve@example.com',         'ev1l_Passw0rd!',    'user',  'Definitely not malicious');
+INSERT OR IGNORE INTO users (username, email, password, role, bio, api_key) VALUES
+    ('admin',   'admin@brewhaus.local',    'S3cur3!Admin#2024', 'admin', 'System administrator', 'bl_api_live_admin_8f2e91b0cd99'),
+    ('alice',   'alice@example.com',       'alice_Pass!99',     'user',  'Security researcher', 'bl_api_live_alice_3d7a82c1bf88'),
+    ('bob',     'bob@example.com',         'b0bbyTables#1',     'user',  'Bug bounty hunter',   'bl_api_live_bob_9e2d73c2af99'),
+    ('charlie', 'charlie@example.com',     'Ch4rl!3_2024',      'user',  'Pentester',           'bl_api_live_charlie_1a5f83d4ce11'),
+    ('eve',     'eve@example.com',         'ev1l_Passw0rd!',    'user',  'Definitely not malicious', 'bl_api_live_eve_6c9f20d3de55');
 
 INSERT OR IGNORE INTO products (name, description, price, category, image_emoji) VALUES
     ('Espresso',       'Rich and bold single shot',              3.50,  'Coffee',      '☕'),

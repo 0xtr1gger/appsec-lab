@@ -1,0 +1,76 @@
+{#
+  XSS Widget — Product Search Tool
+
+  This template is included inside BOTH the Vulnerable and Secure tab panels.
+  The JS in the XSS vulnerability page detects which panel it belongs to
+  (via the parent's data-mode attribute) and routes the request to the
+  correct endpoint (vulnerable vs secure).
+#}
+
+<div class="widget xss-widget">
+    <div class="search-header">
+        <span class="search-logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-search-icon">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+            </svg>
+        </span>
+        <div>
+            <h3 class="search-name">BrewLab Search</h3>
+            <p class="search-tagline">Find your perfect drink</p>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <label class="filter-label">Search Products</label>
+        <div class="filter-controls">
+            <input type="text" class="category-input search-input" placeholder="e.g. Coffee or Latte"
+                autocomplete="off" spellcheck="false" aria-label="Product search query" />
+            <button type="button" class="filter-btn search-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    style="vertical-align: middle; margin-right: 4px;">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                </svg>
+                Search
+            </button>
+        </div>
+    </div>
+
+    <!-- Payload hints (contextually relevant in vulnerable tab) -->
+    <details class="payload-hints">
+        <summary>Example payloads to try</summary>
+        <p class="hint-instruction">Search for a legitimate term first, then try injecting HTML and JavaScript:</p>
+        <ul>
+            <li><code>Coffee</code> — legitimate search query; returns matching products.</li>
+            <li><code>&lt;b&gt;bold&lt;/b&gt;</code> — basic HTML injection; if the text appears <b>bold</b>, the
+                application is rendering raw HTML.</li>
+            <li><code>&lt;img src=x onerror=alert(1)&gt;</code> — image tag with an invalid <code>src</code>; the
+                <code>onerror</code> event handler executes JavaScript when the image fails to load.</li>
+            <li><code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code> — classic
+                <code>&lt;script&gt;</code> injection; executes immediately when inserted into the DOM.
+                <strong>Note:</strong> may not fire when injected via <code>innerHTML</code> —
+                use event-handler-based payloads instead.</li>
+            <li><code>&lt;svg onload=alert('XSS')&gt;</code> — SVG element with an <code>onload</code> event handler;
+                executes JavaScript as soon as the element is rendered.</li>
+            <li><code>&lt;details open ontoggle=alert('XSS')&gt;&lt;summary&gt;click&lt;/summary&gt;&lt;/details&gt;</code>
+                — uses the <code>ontoggle</code> event on a <code>&lt;details&gt;</code> element; fires automatically
+                because of the <code>open</code> attribute.</li>
+        </ul>
+    </details>
+
+    <!-- Error area -->
+    <div class="widget-error" style="display: none;"></div>
+
+    <!-- Reflected query display -->
+    <div class="query-used reflected-query" style="display: none;">
+        <span class="query-label">Reflected input:</span>
+        <code class="query-value reflected-value"></code>
+    </div>
+
+    <!-- Search results (populated via JS with server-rendered HTML) -->
+    <div class="xss-results-container" style="display: none;"></div>
+</div>

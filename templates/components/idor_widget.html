@@ -1,0 +1,88 @@
+{#
+  IDOR Widget — Developer API Keys Portal
+
+  This template is included inside BOTH the Vulnerable and Secure tab panels.
+  The JS in the IDOR vulnerability page handles panel-specific events.
+#}
+
+<div class="widget idor-widget">
+    <!-- Active Session Banner -->
+    <div class="session-banner mb-3">
+        <span class="pulse-indicator"></span>
+        <div class="session-details">
+            <span class="session-label">Simulated Session:</span>
+            <strong class="session-user">alice</strong>
+            <span class="session-id-badge">ID: 2</span>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <label class="filter-label">Retrieve Developer Account Profile</label>
+        <div class="filter-controls">
+            <input type="number" class="category-input user-id-input" placeholder="User ID (e.g. 2)" min="1" max="100" value="2"
+                autocomplete="off" spellcheck="false" aria-label="Account User ID" />
+            <button type="button" class="filter-btn load-profile-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    style="vertical-align: middle; margin-right: 4px;">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+                Load Portal Account
+            </button>
+        </div>
+    </div>
+
+    <!-- Payload hints -->
+    <details class="payload-hints">
+        <summary>Direct references to try</summary>
+        <p class="hint-instruction">Tamper with the User ID parameter to fetch records:</p>
+        <ul>
+            <li><code>2</code> — Alice (Your own profile). Validates expected behavior.</li>
+            <li><code>1</code> — Admin profile. Accessing this is an IDOR vulnerability, exposing administrative API keys and PII.</li>
+            <li><code>3</code>, <code>4</code>, <code>5</code> — Bob, Charlie, and Eve profiles.</li>
+            <li><code>99</code> — Non-existent user ID to observe how the application handles errors (e.g., 404 response).</li>
+        </ul>
+    </details>
+
+    <!-- Error Area -->
+    <div class="widget-error" style="display: none;"></div>
+
+    <!-- API Request/Query Display -->
+    <div class="query-used request-url-display" style="display: none;">
+        <span class="query-label">API Request URL:</span>
+        <code class="query-value request-url-val"></code>
+    </div>
+
+    <!-- Profile Detail Card (populated via JS) -->
+    <div class="profile-card-display" style="display: none;">
+        <div class="profile-details-wrapper">
+            <div class="profile-avatar-row">
+                <div class="profile-avatar">👤</div>
+                <div class="profile-meta">
+                    <h4 class="profile-username">username</h4>
+                    <span class="profile-role-badge">role</span>
+                </div>
+            </div>
+            <div class="profile-data-fields mt-3">
+                <div class="data-row">
+                    <span class="data-label">User ID</span>
+                    <span class="data-val profile-id-val">2</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Email Address</span>
+                    <span class="data-val profile-email-val">email@example.com</span>
+                </div>
+                <div class="data-row bio-row">
+                    <span class="data-label">Biography</span>
+                    <span class="data-val profile-bio-val">User biography...</span>
+                </div>
+                <!-- Sensitive field wrapper for API key leaking -->
+                <div class="data-row sensitive-row leaked-api-key-row" style="display: none;">
+                    <span class="data-label alert-text-label">Leaked API Key</span>
+                    <span class="data-val text-danger fw-bold profile-api-key-val">secret</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

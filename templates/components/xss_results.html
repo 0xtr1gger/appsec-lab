@@ -1,0 +1,33 @@
+{#
+  XSS Results — Server-rendered search results partial
+
+  This template is rendered server-side and returned as HTML in a JSON
+  response.  The `query` variable is either auto-escaped (secure) or
+  raw Markup (vulnerable), depending on which endpoint called it.
+#}
+
+{% if results %}
+<div class="xss-results-header">
+    <span class="xss-results-count">{{ results|length }} result{{ 's' if results|length != 1 else '' }}</span>
+    for "<span class="xss-reflected-term">{{ query }}</span>"
+</div>
+<div class="product-grid">
+    {% for item in results %}
+    <div class="product-card">
+        <div class="product-card-top">
+            <span class="product-emoji">{{ item.image_emoji or '☕' }}</span>
+            <span class="product-category-badge">{{ item.category }}</span>
+        </div>
+        <h4 class="product-name">{{ item.name }}</h4>
+        <p class="product-desc">{{ item.description or '—' }}</p>
+        <span class="product-price">${{ "%.2f"|format(item.price) }}</span>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="xss-results-header">
+    <span class="xss-results-count">0 results</span>
+    for "<span class="xss-reflected-term">{{ query }}</span>"
+</div>
+<div class="empty-results">No products match your search.</div>
+{% endif %}
